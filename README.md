@@ -1,72 +1,50 @@
 # Buddy Reroll for Claude Code
 
-A Claude Code skill to re-roll, inspect, or switch your Claude Code Buddy.
+A Claude Code skill for inspecting, re-rolling, and switching your Claude Code Buddy.
 
-## What is this?
+## What This Project Does
 
-Claude Code has a hidden feature where you get a cute "Buddy" (pet/companion) that displays in the status bar. This skill helps you search for and switch to a different Buddy based on your preferences.
+Claude Code has a hidden Buddy system. This project helps you:
 
-## Features
+- inspect the Buddy tied to a `userID`
+- search for Buddies matching your preferences
+- switch to a selected Buddy more safely
 
-- 🔍 **Inspect** your current Buddy
-- 🔄 **Re-roll** for new Buddies matching your criteria
-- 🎨 Filter by species, rarity, shiny status, eyes, hats, and minimum stats
-- ✅ Safe workflow with backups and validation
+Supported filters include species, rarity, shiny status, eyes, hats, and minimum stats.
 
-## Supported Species
+## Can Other People Use It Right Away?
 
-`duck`, `goose`, `blob`, `cat`, `dragon`, `octopus`, `owl`, `penguin`, `turtle`, `snail`, `ghost`, `axolotl`, `capybara`, `cactus`, `robot`, `rabbit`, `mushroom`, `chonk`
+Yes, other people can clone or download this repository and use it.
 
-## Supported Rarities
+It is not fully "download and magically works" though. Users still need:
 
-`common`, `uncommon`, `rare`, `epic`, `legendary`
+- Claude Code with skill support
+- Node.js in `PATH`
+- to register the skill in `~/.claude/settings.json`
+- a compatible environment for Buddy switching
 
-## Supported Hats
+Important:
 
-`none`, `crown`, `tophat`, `propeller`, `halo`, `wizard`, `beanie`, `tinyduck`
+- The reroll and check functions can still be used as a script.
+- Automatic Buddy switching is intentionally conservative and is meant for compatible non-official or proxy-based setups.
+- If the environment looks official or unclear, the skill should stop rather than modify `~/.claude.json`.
 
-## Supported Eye Styles
+## Requirements
 
-`·`, `✦`, `×`, `◉`, `@`, `°`
-
-## Usage
-
-In Claude Code, just ask naturally:
-
-- "换 Claude Buddy"
-- "刷 Claude 宠物"
-- "reroll buddy"
-- "find a legendary dragon buddy"
-- "show me my current buddy"
-- "get me a shiny capybara"
-
-The skill will automatically:
-
-1. Check if your environment is compatible
-2. Search for Buddies matching your preferences
-3. Show you the results
-4. Apply the change safely after your confirmation
-
-## Safety Guarantees
-
-- Creates a backup of `~/.claude.json` before modifying
-- Only works in non-official/third-party proxy setups (won't modify official OAuth accounts automatically)
-- Only changes the `userID` field — everything else stays the same
-- Validates JSON after modification
+- Claude Code with skill support
+- Node.js 18+ recommended
+- Access to `~/.claude.json`
+- A compatible setup if you want to actually switch the Buddy automatically
 
 ## Installation
 
-### Step 1: Clone the repository
-
-Clone this repo to your local machine:
+### Option 1: Install into the default Claude skills directory
 
 ```bash
 git clone https://github.com/crisxuan/buddy-reroll.git ~/.claude/skills/buddy-reroll
 ```
 
-### Step 2: Add to Claude Code skills
-
-Edit your Claude Code settings file at `~/.claude/settings.json` and add the skill to the `skills` array:
+Then add this to `~/.claude/settings.json`:
 
 ```json
 {
@@ -80,49 +58,152 @@ Edit your Claude Code settings file at `~/.claude/settings.json` and add the ski
 }
 ```
 
-If you already have other skills, just add this entry to your existing `skills` array.
+If you already have a `skills` array, add the object above to the existing array.
 
-### Step 3: Restart Claude Code
+Restart Claude Code after saving the settings file.
 
-Restart your Claude Code CLI for the new skill to take effect.
+### Option 2: Install to any custom directory
 
-### Alternative: Manual import
+Clone the repository anywhere you want:
 
-If you're using a different directory structure, just point `filePath` to where you cloned `SKILL.md`.
+```bash
+git clone https://github.com/crisxuan/buddy-reroll.git /path/to/buddy-reroll
+```
 
-## Requirements
+Then point `filePath` at that local `SKILL.md`:
 
-- Claude Code CLI with skill support
-- Node.js available in your PATH (for running the reroll script)
-- Third-party proxy setup (this skill won't modify official Anthropic OAuth accounts automatically for safety)
+```json
+{
+  "skills": [
+    {
+      "name": "buddy-reroll",
+      "type": "file",
+      "filePath": "/path/to/buddy-reroll/SKILL.md"
+    }
+  ]
+}
+```
 
-## Usage
+If `~` does not expand correctly in your environment, use an absolute path instead.
 
-In Claude Code, just ask naturally:
+## Ways to Use It
 
-- "换 Claude Buddy"
-- "刷 Claude 宠物"
-- "reroll buddy"
-- "find a legendary dragon buddy"
-- "show me my current buddy"
-- "get me a shiny capybara"
+### 1. Talk to Claude Code naturally
 
-The skill will automatically:
+After the skill is installed, you can simply ask Claude Code things like:
 
-1. Check if your environment is compatible
-2. Search for Buddies matching your preferences
-3. Show you the results
-4. Apply the change safely after your confirmation
+- `换 Claude Buddy`
+- `刷 Claude 宠物`
+- `查看当前 buddy`
+- `reroll buddy`
+- `find a legendary dragon buddy`
+- `show me my current buddy`
+- `get me a shiny capybara`
 
-## Safety Guarantees
+This is the easiest way to use the project. The skill should:
 
-- Creates a backup of `~/.claude.json` before modifying
-- Only works in non-official/third-party proxy setups (won't modify official OAuth accounts automatically)
-- Only changes the `userID` field — everything else stays the same
-- Validates JSON after modification
+1. check whether your environment looks compatible
+2. interpret your request
+3. run the search script
+4. show matching results
+5. ask for confirmation before applying a change
+
+### 2. Manual skill configuration plus natural-language use
+
+If you prefer a more explicit setup flow:
+
+1. clone the repository
+2. add the `skills` entry in `~/.claude/settings.json`
+3. restart Claude Code
+4. ask for what you want in plain language
+
+Example requests:
+
+- `给我找一个 legendary dragon buddy`
+- `帮我刷一个 shiny capybara`
+- `看看我当前的 Claude Buddy`
+
+### 3. Run the script directly from the command line
+
+You can use the bundled script even without going through skill triggering.
+
+Examples:
+
+```bash
+node ~/.claude/skills/buddy-reroll/scripts/buddy-reroll.js --check <userID>
+node ~/.claude/skills/buddy-reroll/scripts/buddy-reroll.js --species dragon --rarity legendary
+node ~/.claude/skills/buddy-reroll/scripts/buddy-reroll.js --species cat --rarity epic --count 3
+node ~/.claude/skills/buddy-reroll/scripts/buddy-reroll.js --species capybara --shiny --json
+```
+
+If you installed the repo somewhere else, replace the path with your actual local path.
+
+### 4. Use it as an inspection-only tool
+
+If you do not want the skill to modify anything automatically, you can still use it to:
+
+- inspect your current Buddy
+- inspect a known `userID`
+- search for candidate Buddies
+
+This is useful if you want to manually review the output first.
+
+## Script Options
+
+```bash
+node scripts/buddy-reroll.js [options]
+```
+
+Options:
+
+- `--species <name>`
+- `--rarity <name>`
+- `--eye <char>`
+- `--hat <name>`
+- `--shiny`
+- `--min-stats [value]`
+- `--max <number>`
+- `--count <number>`
+- `--check <uid>`
+- `--json`
+
+## Supported Values
+
+### Species
+
+`duck`, `goose`, `blob`, `cat`, `dragon`, `octopus`, `owl`, `penguin`, `turtle`, `snail`, `ghost`, `axolotl`, `capybara`, `cactus`, `robot`, `rabbit`, `mushroom`, `chonk`
+
+### Rarities
+
+`common`, `uncommon`, `rare`, `epic`, `legendary`
+
+### Hats
+
+`none`, `crown`, `tophat`, `propeller`, `halo`, `wizard`, `beanie`, `tinyduck`
+
+### Eye Styles
+
+`·`, `✦`, `×`, `◉`, `@`, `°`
+
+## Safety Notes
+
+- The project should back up `~/.claude.json` before applying a Buddy change.
+- It should only replace the `userID` field when applying a selected result.
+- It should validate that the updated file is still valid JSON.
+- It should stop if the environment looks official or ambiguous.
+
+This is intentional. Refusing to modify an unclear setup is safer than risking account or config breakage.
+
+## Repository Layout
+
+```text
+.
+├── README.md
+├── SKILL.md
+└── scripts/
+    └── buddy-reroll.js
+```
 
 ## License
-
-MIT
 
 MIT
